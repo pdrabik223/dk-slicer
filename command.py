@@ -52,6 +52,7 @@ class Move(Command):
             output = output + ' Y' + str(self.y)
         if self.f != None:
             output = output + ' F' + str(self.f)
+            # out += f"x={self.f:.2f}"
         output += ' E0.01'
         return output
 

@@ -1,51 +1,34 @@
 # import numpy as np
 # import cv2
+import math
+from os import curdir
+
+from cv2 import LSD_REFINE_ADV
 from command import Command, DisEngageTool, EngageTool, Move
 from gcode_file_creator import GCodeFile
+from img_reader import ImageReader
 
 
-def Circle(center_x: float, center_y: float, radius: float) -> list[Command]:
-
+def SimpleCircle(center_x: float, center_y: float, radius: float) -> list[Command]:
     center_position: tuple(float, float)
     center_position = (center_x, center_y)
-    x = radius
-    y = 0
-    err = 0
+    alpha: float
     circle: list[Command]
     circle = []
-    while x >= y:
-        circle.append(
-            Move(x=center_position[0] + x, y=center_position[1] + y))
-        circle.append(
-            Move(x=center_position[1] + y, y=center_position[0] + x))
-        circle.append(
-            Move(x=center_position[1] + x, y=center_position[0] + y))
-        circle.append(
-            Move(x=center_position[1] + x, y=center_position[0] - y))
-        circle.append(
-            Move(x=center_position[1] + y, y=center_position[0] - x))
-        circle.append(
-            Move(x=center_position[1] - y, y=center_position[0] - x))
-        circle.append(
-            Move(x=center_position[1] - x, y=center_position[0] - y))
-        circle.append(
-            Move(x=center_position[1] - x, y=center_position[0] + y))
-        circle.append(
-            Move(x=center_position[1] - y, y=center_position[0] + x))
+    alpha = 10
+    for angle in range(0, 361, alpha):
+        circle.append(Move(x=center_x + radius * math.cos(math.radians(angle)),
+                      y=center_y + radius * math.sin(math.radians(angle))))
 
-        if err <= 0:
-            y += 1
-            err += 2 * y + 1
-        else:
-            x -= 1
-            err -= 2 * x + 1
+        # r*cos(alpha) = x  r*sin(alpha) = y
+        #
     return circle
 
 
 file = GCodeFile("test")
 
 
-circle = Circle(50, 50, 10.0)
+circle = SimpleCircle(50, 50, 10.0)
 
 file.PushCommand(circle[0])
 file.PushCommand(EngageTool())
@@ -57,3 +40,7 @@ for point in circle[1:]:
 
 file.PushCommand(DisEngageTool())
 file.SaveFile()
+
+
+# image = ImageReader("Lena_raw.jpg")
+# image.DisplayEdges()
