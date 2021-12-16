@@ -12,7 +12,7 @@ class IncorrectArgumentListError(Exception):
 class GCodeFile:
     """
     Class constructor,
-    @param filepath should be
+    @param filepath can be passed with or without '.gcode'
     """
 
     def __init__(self, file_path: str) -> None:
@@ -22,29 +22,31 @@ class GCodeFile:
 
         self.file_path = file_path
 
-        self._commad_array: list[str]
-        self._commad_array = []
+        self.command_array: list[str]
+        self.command_array = []
 
-    def StartUp(self) -> list[str]:
+    def start_up(self):
         startup_commands: list[str]
         startup_commands = []
         startup_commands.append("M115 U3.8.1 ; tell printer latest fw version")
         startup_commands.append("M862.3 P \"MK3S\" ; printer model check")
-        startup_commands.append("M862.1 P0.4 ; nozzle diameter check")
+        startup_commands.append("M302 20;  Allow cold extrude movement")
         startup_commands.append("M104 S20 ; set extruder temp")
-        startup_commands.append("M140 S20 ; set bed temp")
+        startup_commands.append("M140 S22 ; set bed temp")
+        startup_commands.append("M190 S22 ; wait for bed temp")
+        startup_commands.append("M109 S22 ; wait for extruder temp")
         startup_commands.append("M107 ; turn off fan")
         startup_commands.append(
             "M201 X1000 Y1000 Z200 ; sets maximum accelerations, mm/sec^2")
         startup_commands.append(
-            "M203 X200 Y200 Z12 E120 ; sets maximum feedrates, mm/sec")
+            "M203 X200 Y200 Z12 E120 ; sets maximum feed rates, mm/sec")
         startup_commands.append(
             "M204 P1250 R1250 T1250 ; sets acceleration (P, T) and retract acceleration (R), mm/sec^2")
         startup_commands.append(
-            "M205 X8.00 Y8.00 Z0.40 E4.50 ; sets the jerk limits, mm/sec")
+            "M205 X6.00 Y6.00 Z0.40 E4.50 ; sets the jerk limits, mm/sec")
         startup_commands.append(
             "M205 S0 T0 ; sets the minimum extruding and travel feed rate, mm/sec")
-        startup_commands.append("G1 F200.000; set movement speed")
+        startup_commands.append("G1 F1500.000; set movement speed")
         startup_commands.append("M73 P0 R30; set current progress")
         startup_commands.append("M73 Q0 S30; set current progress")
         startup_commands.append("G90 ; use absolute coordinates")
@@ -58,32 +60,31 @@ class GCodeFile:
 
         startup_commands.append("; End of startup")
 
-        startup_commands = ["\n" + command for command in startup_commands]
+        command_array = ["\n" + command for command in startup_commands]
 
-        return startup_commands
+        return command_array
 
-    def ShutDown(self) -> list[str]:
-        shutdown_commads: list[str]
-        shutdown_commads = []
-        shutdown_commads.append(DisEngageTool().GCode())
-        shutdown_commads.append("M73 P100 R0; set current progress")
-        shutdown_commads.append("M73 Q100 S0; set current progress")
-        shutdown_commads.append("G1 Z10 ; Move print head up")
-        shutdown_commads.append("G1 X0 Y200 F3000 ; home X axis")
-        shutdown_commads.append("M84 ; disable motors")
+    def shut_down(self) :
+        shutdown_commands: list[str]
+        shutdown_commands = []
+        shutdown_commands.append(DisEngageTool().GCode())
+        shutdown_commands.append("M73 P100 R0; set current progress")
+        shutdown_commands.append("M73 Q100 S0; set current progress")
+        shutdown_commands.append("G1 Z10 ; Move print head up")
+        shutdown_commands.append("G1 X0 Y200 F3000 ; home X axis")
+        shutdown_commands.append("M84 ; disable motors")
 
-        shutdown_commads = ["\n" + command for command in shutdown_commads]
+        command_array = ["\n" + command for command in shutdown_commands]
 
-        return shutdown_commads
+        return command_array
 
-    def PushCommand(self, command: Command) -> None:
-        self._commad_array.append("\n" + command.GCode())
+    def push_command(self, command: Command) -> None:
+        self.command_array.append("\n" + command.GCode())
 
-    def SaveFile(self) -> None:
-
+    def save_file(self) -> None:
         with open(self.file_path, 'w') as file:
             file.writelines(
-                [";G-Code generated automatically using drab0l1-slicer"])
-            file.writelines(self.StartUp())
-            file.writelines(self._commad_array)
-            file.writelines(self.ShutDown())
+                [";G-Code generated automatically using drab0l1-slicer hi5"])
+            file.writelines(self.start_up())
+            file.writelines(self.command_array)
+            file.writelines(self.shut_down())
