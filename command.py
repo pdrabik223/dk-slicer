@@ -1,11 +1,4 @@
 
-from dataclasses import dataclass
-
-@dataclass
-class Vec2:
-    x: float
-    y: float
-
 
 class Command:
 
@@ -54,11 +47,11 @@ class Move(Command):
     def GCode(self) -> str:
         output = self.g_code_command
         if self.x != None:
-            output = output + ' X' + str(self.x)
+            output = output + ' X' + str(round(self.x, 3))
         if self.y != None:
-            output = output + ' Y' + str(self.y)
+            output = output + ' Y' + str(round(self.y, 3))
         if self.f != None:
-            output = output + ' F' + str(self.f)
+            output = output + ' F' + str(round(self.f, 6))
             # out += f"x={self.f:.2f}"
         output += ' E0.01'
         return output
@@ -73,7 +66,7 @@ class EngageTool(Command):
         super().__init__()
         self.comment = "Engage tool"
         self.g_code_command = "G1"
-        self.z = 5.0  # 5 millmiters above bed is on position
+        self.z = 0.4  # 5 millmiters above bed is on position
 
     def GCode(self) -> str:
         return self.g_code_command + ' Z'+str(self.z)+' ; '+self.comment
@@ -88,7 +81,7 @@ class DisEngageTool(Command):
         super().__init__()
         self.comment = "Disengage tool"
         self.g_code_command = "G1"
-        self.z = 10.0  # 10 millmiters above bed is on position
+        self.z = 0.8  # 10 millmiters above bed is on position
 
     def GCode(self) -> str:
         return self.g_code_command + ' Z' + str(self.z) + ' ; '+self.comment
@@ -144,4 +137,3 @@ class DrawLine(Command):
             commands.append(DisEngageTool().GCode())
 
         return "\n".join(commands)
-

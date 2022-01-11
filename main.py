@@ -9,7 +9,7 @@ from gcode_file_creator import GCodeFile
 # from img_reader import ImageReader
 
 
-def simple_circle(center_x: float, center_y: float, radius: float) :
+def simple_circle(center_x: float, center_y: float, radius: float):
     center_position: tuple[float, float]
     center_position = (center_x, center_y)
     alpha: float
@@ -28,7 +28,7 @@ def simple_circle(center_x: float, center_y: float, radius: float) :
 def main() -> None:
     file = GCodeFile("test")
 
-    circle = simple_circle(50, 50, 10.0)
+    circle = simple_circle(100, 100, 10.0)
 
     file.push_command(circle[0])
     file.push_command(EngageTool())
