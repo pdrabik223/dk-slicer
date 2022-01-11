@@ -132,12 +132,13 @@ class DrawLine(Command):
     def GCode(self):
         commands = []
 
+
+        commands.append(Move(x=self.p1.x, y=self.p1.y).GCode())
+
         if self.engage:
             commands.append(EngageTool().GCode())
 
         commands.append(Move(x=self.p2.x, y=self.p2.y).GCode())
-        commands.append(Move(x=self.p1.x, y=self.p1.y).GCode())
-
 
         if self.disengage:
             commands.append(DisEngageTool().GCode())
