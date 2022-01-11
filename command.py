@@ -1,4 +1,11 @@
 
+from dataclasses import dataclass
+
+@dataclass
+class Vec2:
+    x: float
+    y: float
+
 
 class Command:
 
@@ -108,3 +115,32 @@ class Wait(Command):
 
     def GCode(self) -> str:
         return self.g_code_command + ' P' + self.time + ' ; ' + self.comment
+
+class DrawLine(Command):
+    """
+    Engages the tool draws the line from p1 to p2
+    than disenagages the tool
+    """
+    def __init__(self, p1: Vec2, p2: Vec2, engage=True, disengage=True):
+        super().__init__()
+        self.p1 = p1
+        self.p2 = p2
+
+        self.engage = engage
+        self.disengage = disengage
+
+    def GCode(self):
+        commands = []
+
+        if self.engage:
+            commands.append(EngageTool().GCode())
+
+        commands.append(Move(x=self.p2.x, y=self.p2.y).GCode())
+        commands.append(Move(x=self.p1.x, y=self.p1.y).GCode())
+
+
+        if self.disengage:
+            commands.append(DisEngageTool().GCode())
+
+        return "\n".join(commands)
+

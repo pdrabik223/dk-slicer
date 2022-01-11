@@ -2,6 +2,7 @@ from types import coroutine
 from typing import Match, NoReturn
 import numpy as np
 import enum
+from typing import List
 from command import *
 
 
@@ -22,11 +23,13 @@ class GCodeFile:
 
         self.file_path = file_path
 
-        self.command_array: list[str]
-        self.command_array = []
 
-    def start_up(self):
-        startup_commands: list[str]
+        self._commad_array: List[str]
+        self._commad_array = []
+
+    def StartUp(self) -> List[str]:
+        startup_commands: List[str]
+
         startup_commands = []
         startup_commands.append("M115 U3.8.1 ; tell printer latest fw version")
         startup_commands.append("M862.3 P \"MK3S\" ; printer model check")
@@ -64,15 +67,16 @@ class GCodeFile:
 
         return command_array
 
-    def shut_down(self) :
-        shutdown_commands: list[str]
-        shutdown_commands = []
-        shutdown_commands.append(DisEngageTool().GCode())
-        shutdown_commands.append("M73 P100 R0; set current progress")
-        shutdown_commands.append("M73 Q100 S0; set current progress")
-        shutdown_commands.append("G1 Z10 ; Move print head up")
-        shutdown_commands.append("G1 X0 Y200 F3000 ; home X axis")
-        shutdown_commands.append("M84 ; disable motors")
+    def ShutDown(self) -> List[str]:
+        shutdown_commads: List[str]
+        shutdown_commads = []
+        shutdown_commads.append(DisEngageTool().GCode())
+        shutdown_commads.append("M73 P100 R0; set current progress")
+        shutdown_commads.append("M73 Q100 S0; set current progress")
+        shutdown_commads.append("G1 Z10 ; Move print head up")
+        shutdown_commads.append("G1 X0 Y200 F3000 ; home X axis")
+        shutdown_commads.append("M84 ; disable motors")
+
 
         command_array = ["\n" + command for command in shutdown_commands]
 
