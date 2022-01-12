@@ -21,3 +21,8 @@ Tool that creates tool paths for 3d printer to draw stuff
         print
         ```
 
+# Note
+All points on canvas should be adjusted by:
+    
+    41 in y axis
+    36 in x axis
