@@ -11,6 +11,7 @@ from PyQt5.QtWidgets import QFileDialog
 from PyQt5.QtGui import QPixmap
 
 from slicer_devel import convert_img
+from pronterface_interface import spawn_and_send_commands
 
 class App():
     def __init__(self) -> None:
@@ -36,7 +37,7 @@ class App():
         layout.addWidget(convert_button)
 
         print_button = QPushButton('Print')
-        # print_button.clicked.connect(print_image)
+        print_button.clicked.connect(self.print_image)
         layout.addWidget(print_button)
 
         self.window.setLayout(layout)
@@ -57,6 +58,9 @@ class App():
         pixmap = QPixmap(path)
         pixmap = pixmap.scaled(640, 480, PyQt5.QtCore.Qt.KeepAspectRatio)
         self.img_widget.setPixmap(pixmap)
+    
+    def print_image(self):
+        spawn_and_send_commands("C:/I/Printrun-Win-Slic3r-03Feb2015/pronsole.exe", "tmp.gcode")
 
     def run(self):
         self.window.show()
