@@ -123,8 +123,8 @@ def generate_gcode(image_stages, gcode_path):
                                              x - start.x,
                                              y - start.y + 1,
                                              linewidth=1,
-                                             edgecolor='r',
-                                             facecolor='r')
+                                             edgecolor='black',
+                                             facecolor='black')
                     ax.add_patch(rect)
                     start = None
 
@@ -134,8 +134,8 @@ def generate_gcode(image_stages, gcode_path):
                                              x - start.x,
                                              y - start.y + 0.1,
                                              linewidth=0.1,
-                                             edgecolor='r',
-                                             facecolor='r')
+                                             edgecolor='black',
+                                             facecolor='black')
                     ax.add_patch(rect)
                     start = None
 
