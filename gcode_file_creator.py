@@ -47,7 +47,7 @@ class GCodeFile:
             "M205 X6.00 Y6.00 Z0.40 E4.50 ; sets the jerk limits, mm/sec")
         startup_commands.append(
             "M205 S0 T0 ; sets the minimum extruding and travel feed rate, mm/sec")
-        startup_commands.append("G1 F1500.000; set movement speed")
+        startup_commands.append("G1 F3000.000; set movement speed")
         startup_commands.append("M73 P0 R30; set current progress")
         startup_commands.append("M73 Q0 S30; set current progress")
         startup_commands.append("G90 ; use absolute coordinates")
