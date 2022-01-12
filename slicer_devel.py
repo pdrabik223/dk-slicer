@@ -1,3 +1,4 @@
+import pathlib
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
@@ -72,6 +73,8 @@ def horizontal_filter(tresholded_images):
             list(map(lambda x: x if x > 0 else 0,
                      (img - last).ravel()))).reshape(img.shape)
         last = img
+        plt.imshow(img)
+        plt.savefig(f"out/{i}.png")
 
     return filtered_images_staged
 
@@ -142,8 +145,12 @@ def generate_gcode(image_stages, gcode_path):
     plt.savefig(fname)
     return fname
 
-
+import os
+from pathlib import Path
 def convert_img(path, gcode_path):
+    if not os.path.isdir("out"):  
+        os.mkdir("out")
+    
     img = load_image(path)
     img = scale_img(img)
     img = img_to_numpy(img)
