@@ -3,12 +3,16 @@ Tool that creates tool paths for 3d printer to draw stuff
 
 # TODOS:
 - [ ] Pen mounting mechanism
-- [ ] Fix GCode from images generation 
+- [X] Fix GCode from images generation 
 - [x] Generated Gcode has empty line at the begging, remove it
 - [ ] Add layer change Api
 - [ ] Bounding box Api
 - [ ] Function plotter
-- [ ] Use pronconsole in a subprocess to print directly 
+- [ ] Remove line at the beginning
+- [ ] Progress bar - printing
+- [ ] Progress bar - converting
+- [ ] Stop hanging the app while printing and converting
+- [X] Use pronconsole in a subprocess to print directly 
     - [link to official site](https://www.pronterface.com/)
     - [link to downloads](https://kliment.kapsi.fi/printrun/)
     - list of commands that need to be passed to printrun subprocess (on Windows)
