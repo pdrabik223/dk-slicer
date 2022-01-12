@@ -109,6 +109,13 @@ class Wait(Command):
     def GCode(self) -> str:
         return self.g_code_command + ' P' + self.time + ' ; ' + self.comment
 
+from dataclasses import dataclass
+
+@dataclass
+class Vec2:
+    x: float
+    y: float
+
 class DrawLine(Command):
     """
     Engages the tool draws the line from p1 to p2
