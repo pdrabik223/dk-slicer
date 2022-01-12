@@ -11,18 +11,24 @@ from command import DrawLine, Vec2, DisEngageTool
 
 
 def load_image(path):
-    return Image.open(path)
-
+    img = Image.open(path).convert("RGBA")
+    background = Image.new("RGBA",img.size,(255,255,255))
+    composite = Image.alpha_composite(background, img).convert("RGB")
+    composite.show()
+    return composite
 
 def scale_img(img):
-    img.thumbnail((17 * 10 * 2, 17 * 10 * 2), Image.ANTIALIAS)
+    img.thumbnail((16 * 10 * 2, 16 * 10 * 2), Image.ANTIALIAS)
     return img
 
 
 def img_to_numpy(img):
+    
     w, h = img.size
-    img = np.array(img)
+    img = np.asarray(img)
+
     img = img.reshape((h, w, 3))
+
     return img
 
 
@@ -44,6 +50,7 @@ def treshold_image(img):
 
 
 def horizontal_filter(tresholded_images):
+    # plt.imsave("test.png", tresholded_images[0])
     filtered_images_horizontal = np.empty_like(tresholded_images)
     for i, img in enumerate(tresholded_images):
         filtered_images_horizontal[i] = ndimage.generic_filter(img,
@@ -87,6 +94,9 @@ def generate_gcode(image_stages, gcode_path):
     gfile = GCodeFile(gcode_path)
     gfile.start_up()
 
+    offset_x = 36     
+    offset_y = 21     
+
     fig, ax = plt.subplots()
     plt.xlim(0, 200)
     plt.ylim(0, 200)
@@ -96,11 +106,11 @@ def generate_gcode(image_stages, gcode_path):
 
         for y, row in enumerate(working_image):
             y = h - y
-            y = 20 + y * min_y_move
+            y = offset_y + y * min_y_move
             start = None
             for x, pixel in enumerate(row):
-                x = w - x
-                x = 20 + x * min_x_move
+                # x = w - x
+                x = offset_x + x * min_x_move
                 if pixel > 1 and start is None:
                     start = Vec2(x=x, y=y)
 
