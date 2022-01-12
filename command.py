@@ -81,7 +81,7 @@ class DisEngageTool(Command):
         super().__init__()
         self.comment = "Disengage tool"
         self.g_code_command = "G1"
-        self.z = 0.8  # 10 millmiters above bed is on position
+        self.z = 1.6  # 10 millmiters above bed is on position
 
     def GCode(self) -> str:
         return self.g_code_command + ' Z' + str(self.z) + ' ; '+self.comment
