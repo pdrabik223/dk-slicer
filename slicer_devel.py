@@ -10,6 +10,10 @@ from scipy.ndimage.interpolation import zoom
 from gcode_file_creator import GCodeFile
 from command import DrawLine, Vec2, DisEngageTool
 
+accuracy = 5
+offset_x = 0 #offset_x = 13     
+offset_y = 0 #offset_y = 35     
+safty_margin = 10
 
 def load_image(path):
     img = Image.open(path).convert("RGBA")
@@ -19,7 +23,7 @@ def load_image(path):
     return composite
 
 def scale_img(img):
-    img.thumbnail((16 * 10 * 2, 16 * 10 * 2), Image.ANTIALIAS)
+    img.thumbnail(((200 - offset_x - safty_margin ) * accuracy, (200 - offset_y - safty_margin) * 10 * accuracy), Image.ANTIALIAS)
     return img
 
 
@@ -65,7 +69,7 @@ def horizontal_filter(tresholded_images):
                                                                    [[0], [1],
                                                                     [0]],
                                                                ])
-
+    
     filtered_images_staged = np.empty_like(tresholded_images)
     last = filtered_images_horizontal[0]
     for i, img in enumerate(filtered_images_horizontal):
@@ -81,8 +85,8 @@ def horizontal_filter(tresholded_images):
 
 def generate_gcode(image_stages, gcode_path):
 
-    min_x_move = 1 / 2  # in mm
-    min_y_move = 1 / 2  # in mm
+    min_x_move = 1 / accuracy  # in mm
+    min_y_move = 1 / accuracy  # in mm
 
     bed_size_x = 20 * 10  # in mm
     bed_size_y = 20 * 10  # in mm
@@ -97,19 +101,17 @@ def generate_gcode(image_stages, gcode_path):
     gfile = GCodeFile(gcode_path)
     gfile.start_up()
 
-    offset_x = 36     
-    offset_y = 21     
 
     fig, ax = plt.subplots()
     plt.xlim(0, 200)
     plt.ylim(0, 200)
 
-    for image in image_stages:
+    for idx, image in enumerate(image_stages):
         working_image = image
 
         for y, row in enumerate(working_image):
             y = h - y
-            y = offset_y + y * min_y_move
+            y = 0.2 * idx + offset_y + y * min_y_move 
             start = None
             for x, pixel in enumerate(row):
                 # x = w - x

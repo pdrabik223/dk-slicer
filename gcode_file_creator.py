@@ -24,7 +24,9 @@ class GCodeFile:
 
         self.command_array: list[str]
         self.command_array = []
-
+        self.x_offset = 16
+        self.y_offset = 39
+        
     def start_up(self):
         startup_commands: list[str]
         startup_commands = []
@@ -47,7 +49,7 @@ class GCodeFile:
             "M205 X6.00 Y6.00 Z0.40 E4.50 ; sets the jerk limits, mm/sec")
         startup_commands.append(
             "M205 S0 T0 ; sets the minimum extruding and travel feed rate, mm/sec")
-        startup_commands.append("G1 F6000.000; set movement speed")
+        startup_commands.append("G1 F9000.000; set movement speed")
         startup_commands.append("M73 P0 R30; set current progress")
         startup_commands.append("M73 Q0 S30; set current progress")
         startup_commands.append("G90 ; use absolute coordinates")
@@ -55,13 +57,14 @@ class GCodeFile:
         startup_commands.append(
             "M221 S0; set extrude factor override percentage")
         startup_commands.append("M83 ; extruder relative mode")
-        startup_commands.append(DisEngageTool().GCode())
-        startup_commands.append(Home().GCode())
+        startup_commands.append(DisEngageTool().gcode())
+        startup_commands.append(Home().gcode())
         startup_commands.append("G80 ; mesh bed leveling")
-        startup_commands.append(Move(90, 90).GCode())
-        startup_commands.append(EngageTool().GCode())
+        
+        startup_commands.append(Move(90, 90).gcode())
+        startup_commands.append(EngageTool().gcode())
         startup_commands.append("M0 ; Stop for tool adjustment")
-        startup_commands.append(DisEngageTool().GCode())
+        startup_commands.append(DisEngageTool().gcode())
         startup_commands.append("; End of startup")
 
         command_array = [command + "\n" for command in startup_commands]
@@ -71,7 +74,7 @@ class GCodeFile:
     def shut_down(self):
         shutdown_commands: list[str]
         shutdown_commands = []
-        shutdown_commands.append(DisEngageTool().GCode())
+        shutdown_commands.append(DisEngageTool().gcode())
         shutdown_commands.append("M73 P100 R0; set current progress")
         shutdown_commands.append("M73 Q100 S0; set current progress")
         shutdown_commands.append("G1 Z5 ; Move print head up")
@@ -87,7 +90,8 @@ class GCodeFile:
         return command_array
 
     def push_command(self, command: Command) -> None:
-        self.command_array.append("\n" + command.GCode())
+        command.add_offset(self.x_offset,self.y_offset)
+        self.command_array.append("\n" + command.gcode())
 
     def save_file(self) -> None:
         with open(self.file_path, 'w') as file:
