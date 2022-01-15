@@ -26,6 +26,8 @@ class GCodeFile:
         self.command_array = []
         self.x_offset = 16
         self.y_offset = 39
+        self.x_max = 255
+        self.y_max = 211.9
         
     def start_up(self):
         startup_commands: list[str]

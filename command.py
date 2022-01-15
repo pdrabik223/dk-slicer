@@ -1,4 +1,4 @@
-
+# TODO: What does super() do?
 
 class Command:
 
@@ -10,15 +10,18 @@ class Command:
     def gcode(self) -> str:
         return ';' + self.comment+' ; '+self.comment
 
+    def add_offset(self, x_offset: float, y_offset: float ) -> None:
+        pass
 
 class Home(Command):
     def __init__(self) -> None:
-        super().__init__()
+        # super().__init__()
         self.comment = "Home all axis"
         self.g_code_command = "G28 W"
 
     def gcode(self) -> str:
         return self.g_code_command + ' ; ' + self.comment
+    
 
 
 class Move(Command):
@@ -30,7 +33,7 @@ class Move(Command):
     f feed rate, how fast should move to that place [millimiters / minute]
     """
     def __init__(self, x: float, y: float) -> None:
-        super().__init__()
+        # super().__init__()
         self.g_code_command = 'G1'
         self.x = x
         self.y = y
@@ -58,7 +61,7 @@ class EngageTool(Command):
     """
 
     def __init__(self) -> None:
-        super().__init__()
+        # super().__init__()
         self.comment = "Engage tool"
         self.g_code_command = "G1"
         self.z = 0.4  # 5 millmiters above bed is on position
@@ -73,7 +76,7 @@ class DisEngageTool(Command):
     """
 
     def __init__(self) -> None:
-        super().__init__()
+        # super().__init__()
         self.comment = "Disengage tool"
         self.g_code_command = "G1"
         self.z = 1  # 10 millmiters above bed is on position
@@ -90,16 +93,10 @@ class Wait(Command):
     """
 
     def __init__(self, time: int) -> None:
-        super().__init__()
+        # super().__init__()
         self.comment = "Wait"
         self.g_code_command = "G4"
         self.time = time
-
-    def __init__(self) -> None:
-        super().__init__()
-        self.comment = "Wait"
-        self.g_code_command = "G4"
-        self.time = 1000
 
     def gcode(self) -> str:
         return self.g_code_command + ' P' + self.time + ' ; ' + self.comment
@@ -117,7 +114,7 @@ class DrawLine(Command):
     than disengages the tool
     """
     def __init__(self, p1: Vec2, p2: Vec2, engage=True, disengage=True):
-        super().__init__()
+        # super().__init__()
         self.p1 = p1
         self.p2 = p2
 

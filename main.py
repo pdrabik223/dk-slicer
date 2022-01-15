@@ -75,7 +75,7 @@ def test_print():
 
 def main() -> None:
     file = GCodeFile("test")
-
+    
     circle = simple_circle(100, 100, 10.0)
     file.push_command(circle[0])
     file.push_command(EngageTool())
@@ -87,9 +87,23 @@ def main() -> None:
     file.push_command(DisEngageTool())
     file.save_file()
 
-
+def benchmark()->None:
+    file = GCodeFile("benchmark")    
+    
+    file.push_command(Move(0,0))
+    file.push_command(EngageTool())
+    file.push_command(Move(0,file.y_max))    
+    file.push_command(Move(file.x_max,file.y_max))
+    file.push_command(Move(file.x_max,0))
+    file.push_command(Move(0,0))
+    file.save_file()
+    
+    
 # image = ImageReader("Lena_raw.jpg")
 # image.DisplayEdges()
 if __name__ == "__main__":
     # main()
-    test_print()
+    # test_print()
+    benchmark()
+
+

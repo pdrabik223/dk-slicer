@@ -23,7 +23,7 @@ class App():
         layout = QVBoxLayout()
 
         self.img_widget = QLabel()
-        self.image_path = "./assets/lena.jpg" 
+        self.image_path = "./hello.png"
         self.set_image(self.image_path)
 
         layout.addWidget(self.img_widget)
@@ -43,7 +43,7 @@ class App():
         self.window.setLayout(layout)
 
     def load_image_clicked(self):
-        fname, extensions = QFileDialog.getOpenFileName(self.window, 'Open file',  'c:\\',"Image files (*.jpg *.gif *.png *.bnp)")
+        fname, extensions = QFileDialog.getOpenFileName(self.window, 'Open file',  'c:\\',"Image files (*.jpg *.jfif *.bnp)") # todo :*.png *.gif
         if fname != "":
             self.image_path = fname
             self.set_image(fname)
