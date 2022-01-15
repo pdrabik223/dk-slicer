@@ -27,4 +27,4 @@ Tool that creates tool paths for 3d printer to draw stuff
 
 # Canvas size 
 
-![canvas size](Canvas size.jpg "canvas size img")
+![canvas size](canvas_size.jpg "canvas size img")
