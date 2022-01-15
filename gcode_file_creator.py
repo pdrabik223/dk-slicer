@@ -93,6 +93,7 @@ class GCodeFile:
 
     def push_command(self, command: Command) -> None:
         command.add_offset(self.x_offset,self.y_offset)
+        command.fits_in_boundaries((self.x_offset,self.x_max),(self.y_offset,self.y_max))
         self.command_array.append("\n" + command.gcode())
 
     def save_file(self) -> None:
