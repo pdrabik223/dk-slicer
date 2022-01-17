@@ -27,7 +27,7 @@ class GCodeFile:
         self.x_max = 255
         self.y_max = 211.9
         
-    def start_up(self):
+    def _start_up(self):
         startup_commands: list[str]
         startup_commands = []
         startup_commands.append(
@@ -71,7 +71,7 @@ class GCodeFile:
 
         return command_array
 
-    def shut_down(self):
+    def _shut_down(self):
         shutdown_commands: list[str]
         shutdown_commands = []
         shutdown_commands.append(DisEngageTool().gcode())
@@ -103,6 +103,6 @@ class GCodeFile:
        
        
         with open(file_path, 'w') as file:
-            file.writelines(self.start_up())
+            file.writelines(self._start_up())
             file.writelines(self.command_array)
-            file.writelines(self.shut_down())
+            file.writelines(self._shut_down())
