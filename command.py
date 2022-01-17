@@ -1,5 +1,10 @@
 # TODO: What does super() do?
 
+from dataclasses import dataclass
+from turtle import width
+from distutils import command
+
+
 class Command:
 
     def __init__(self) -> None:
@@ -10,10 +15,13 @@ class Command:
     def gcode(self) -> str:
         return ';' + self.comment+' ; '+self.comment
 
-    def add_offset(self, x_offset: float, y_offset: float ) -> None:
+    def add_offset(self, x_offset: float, y_offset: float) -> None:
         pass
-    def fits_in_boundaries(self, x_range,y_range)->bool:
+
+    def fits_in_boundaries(self, x_range, y_range) -> bool:
         return True
+
+
 class Home(Command):
     def __init__(self) -> None:
         # super().__init__()
@@ -22,7 +30,6 @@ class Home(Command):
 
     def gcode(self) -> str:
         return self.g_code_command + ' ; ' + self.comment
-    
 
 
 class Move(Command):
@@ -33,6 +40,7 @@ class Move(Command):
 
     f feed rate, how fast should move to that place [millimiters / minute]
     """
+
     def __init__(self, x: float, y: float) -> None:
         # super().__init__()
         self.g_code_command = 'G1'
@@ -51,17 +59,20 @@ class Move(Command):
             # out += f"x={self.f:.2f}"
         output += ' E0.01'
         return output
-    
-    def add_offset(self, x_offset: float, y_offset: float ) -> None:
+
+    def add_offset(self, x_offset: float, y_offset: float) -> None:
         self.x += x_offset
         self.y += y_offset
+
     def fits_in_boundaries(self, x_range, y_range) -> bool:
-        if self.x < x_range[0] or self.x >x_range[1]:
-            return False  
-        if self.y < y_range[0] or self.y >y_range[1]:
-            return False  
-        
+        if self.x < x_range[0] or self.x > x_range[1]:
+            return False
+        if self.y < y_range[0] or self.y > y_range[1]:
+            return False
+
         return True
+
+
 class EngageTool(Command):
     """
     moves tool downwards, to on position 
@@ -75,7 +86,8 @@ class EngageTool(Command):
 
     def gcode(self) -> str:
         return self.g_code_command + ' Z'+str(self.z)+' ; '+self.comment
-    
+
+
 class DisEngageTool(Command):
     """
     moves tool upwards, to off position 
@@ -107,20 +119,19 @@ class Wait(Command):
     def gcode(self) -> str:
         return self.g_code_command + ' P' + self.time + ' ; ' + self.comment
 
-from dataclasses import dataclass
-from distutils import command
-from turtle import width
 
 @dataclass
 class Vec2:
     x: float
     y: float
 
+
 class DrawLine(Command):
     """
     Engages the tool draws the line from p1 to p2
     than disengages the tool
     """
+
     def __init__(self, p1: Vec2, p2: Vec2, engage=True, disengage=True):
         # super().__init__()
         self.p1 = p1
@@ -131,7 +142,6 @@ class DrawLine(Command):
 
     def gcode(self):
         commands = []
-
 
         commands.append(Move(x=self.p1.x, y=self.p1.y).gcode())
 
@@ -145,22 +155,23 @@ class DrawLine(Command):
 
         return "\n".join(commands)
 
-    def add_offset(self, x_offset: float, y_offset: float )->None:
-        self.p1.add_offset(x_offset,y_offset)
-        self.p2.add_offset(x_offset,y_offset)
+    def add_offset(self, x_offset: float, y_offset: float) -> None:
+        self.p1.x += x_offset
+        self.p1.y += y_offset
+        self.p2.x += x_offset
+        self.p2.y += y_offset
+
     def fits_in_boundaries(self, x_range, y_range) -> bool:
-        if self.p1.x < x_range[0] or self.p1.x >x_range[1]:
-           return False  
+        if self.p1.x < x_range[0] or self.p1.x > x_range[1]:
+            return False
         if self.p2.x < x_range[0] or self.p2.x > x_range[1]:
-           return False  
-        if self.p1.y < y_range[0] or self.p1.y >y_range[1]:
-           return False  
+            return False
+        if self.p1.y < y_range[0] or self.p1.y > y_range[1]:
+            return False
         if self.p2.y < y_range[0] or self.p2.y > y_range[1]:
-           return False  
-        
-        
-        
-        return True 
+            return False
+
+        return True
 
 # class DrawSquare(Command):
 #     def __init__(self, x:float,y:float,width:float,height:float) -> None:
@@ -174,4 +185,3 @@ class DrawLine(Command):
 #         commands.append(Move(self.x,self.y))
 #         commands.append(EngageTool())
 #         commands.append(Move(self.x+width))
-        
