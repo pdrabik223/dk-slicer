@@ -173,15 +173,23 @@ class DrawLine(Command):
 
         return True
 
-# class DrawSquare(Command):
-#     def __init__(self, x:float,y:float,width:float,height:float) -> None:
-#        self.x = x
-#        self.y = y
-#        self.width = width # change beetwen corners on x axis
-#        self.height = height # change beetwen corners on y axis
-#     def gcode(self):
-#         commands = []
-#         commands.append(DisEngageTool())
-#         commands.append(Move(self.x,self.y))
-#         commands.append(EngageTool())
-#         commands.append(Move(self.x+width))
+class DrawSquare(Command):
+    def __init__(self, x:float,y:float,width:float,height:float) -> None:
+       self.x = x
+       self.y = y
+       self.width = width # change beetwen corners on x axis
+       self.height = height # change beetwen corners on y axis
+    def gcode(self):
+        commands = []
+        commands.append(DisEngageTool())
+        commands.append(Move(self.x,self.y))
+        commands.append(EngageTool())
+        commands.append(Move(self.x+self.width,self.y))
+        commands.append(Move(self.x+self.width,self.y+self.height))
+        commands.append(Move(self.x,self.y+self.height))
+        commands.append(Move(self.x,self.y))
+        commands.append(DisEngageTool())
+        return "\n".join(commands)
+    def add_offset(self, x_offset: float, y_offset: float) -> None:
+        self.x += x_offset
+        self.y += y_offset

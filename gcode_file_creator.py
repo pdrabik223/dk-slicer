@@ -4,6 +4,8 @@ import numpy as np
 import enum
 from command import *
 
+class OutOfBoundsError(Exception):
+    pass
 
 class IncorrectArgumentListError(Exception):
     pass
@@ -15,13 +17,9 @@ class GCodeFile:
     @param filepath can be passed with or without '.gcode'
     """
 
-    def __init__(self, file_path: str) -> None:
+    def __init__(self) -> None:
         # checking if ".gcode" statement is present at the end of the file
-        if file_path[len(file_path) - 6:len(file_path)] != '.gcode':
-            file_path += '.gcode'
-
-        self.file_path = file_path
-
+        
         self.command_array: list[str]
         self.command_array = []
         self.x_offset = 16
@@ -93,11 +91,18 @@ class GCodeFile:
 
     def push_command(self, command: Command) -> None:
         command.add_offset(self.x_offset,self.y_offset)
-        command.fits_in_boundaries((self.x_offset,self.x_max),(self.y_offset,self.y_max))
+        if not command.fits_in_boundaries((self.x_offset,self.x_max),(self.y_offset,self.y_max)):
+           raise OutOfBoundsError
+        
+        
         self.command_array.append("\n" + command.gcode())
-
-    def save_file(self) -> None:
-        with open(self.file_path, 'w') as file:
+    # todo : pointer to file overload  
+    def save_file(self, file_path:str ) -> None:
+        if file_path[len(file_path) - 6:len(file_path)] != '.gcode':
+            file_path += '.gcode'
+       
+       
+        with open(file_path, 'w') as file:
             file.writelines(self.start_up())
             file.writelines(self.command_array)
             file.writelines(self.shut_down())
