@@ -1,6 +1,7 @@
 # TODO: What does super() do?
 
 from dataclasses import dataclass
+import re
 from turtle import width
 from distutils import command
 
@@ -19,8 +20,8 @@ class Command:
         pass
 
     def fits_in_boundaries(self, x_range, y_range) -> bool:
-        return True
-
+        return True 
+    
 
 class Home(Command):
     def __init__(self) -> None:
@@ -174,22 +175,37 @@ class DrawLine(Command):
         return True
 
 class DrawSquare(Command):
+    # x,y specify bottom left corner of a square
     def __init__(self, x:float,y:float,width:float,height:float) -> None:
        self.x = x
        self.y = y
        self.width = width # change beetwen corners on x axis
        self.height = height # change beetwen corners on y axis
+   
     def gcode(self):
         commands = []
-        commands.append(DisEngageTool())
-        commands.append(Move(self.x,self.y))
-        commands.append(EngageTool())
-        commands.append(Move(self.x+self.width,self.y))
-        commands.append(Move(self.x+self.width,self.y+self.height))
-        commands.append(Move(self.x,self.y+self.height))
-        commands.append(Move(self.x,self.y))
-        commands.append(DisEngageTool())
+        commands.append(DisEngageTool().gcode())
+        commands.append(Move(self.x,self.y).gcode())
+        commands.append(EngageTool().gcode())
+        commands.append(Move(self.x+self.width,self.y).gcode())
+        commands.append(Move(self.x+self.width,self.y+self.height).gcode())
+        commands.append(Move(self.x,self.y+self.height).gcode())
+        commands.append(Move(self.x,self.y).gcode())
+        commands.append(DisEngageTool().gcode())
         return "\n".join(commands)
+    
     def add_offset(self, x_offset: float, y_offset: float) -> None:
         self.x += x_offset
         self.y += y_offset
+        
+        
+    def fits_in_boundaries(self, x_range, y_range) -> bool:
+        if self.x < x_range[0]: 
+            return False 
+        if self.y < y_range[0]: 
+            return False
+        if self.x + self.width > x_range[1]: 
+            return False
+        if self.y + self.height > y_range[1]: 
+            return False
+        return True
